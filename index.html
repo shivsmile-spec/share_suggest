@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>India Stock Pro Analyzer</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f3f6fa;color:#172033;font-family:Arial,sans-serif}header{background:#101827;color:#fff;padding:22px}header h1{margin:0 0 6px;font-size:27px}header p{margin:0;color:#cbd5e1}main{max-width:1450px;margin:auto;padding:18px}.card{background:#fff;border-radius:14px;padding:18px;margin-bottom:16px;box-shadow:0 2px 12px #0001}
+.search{display:flex;gap:10px}.search input{flex:1;padding:13px;border:1px solid #cbd5e1;border-radius:9px;font-size:16px}.search button{padding:13px 18px;border:0;border-radius:9px;background:#111827;color:#fff;font-weight:700;cursor:pointer}.status{margin-top:12px;padding:11px;border-radius:9px;background:#f8fafc;color:#667085}.ok{color:#087f5b}.err{color:#b42318}.progress{height:10px;background:#e5e7eb;border-radius:999px;overflow:hidden;margin-top:12px}.bar{height:100%;width:0;background:#2563eb;transition:width .25s}.pct{font-size:12px;color:#667085;text-align:right;margin-top:4px}
+.hero,.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.grid{grid-template-columns:repeat(4,1fr)}.metric,.box{background:#f8fafc;border-radius:10px;padding:13px}.metric span,.label{display:block;color:#667085;font-size:12px}.metric b{display:block;font-size:21px;margin-top:5px}.signal{margin-top:14px;padding:18px;border:1px solid #e5e7eb;border-radius:12px}.signal strong{font-size:27px}.meter{height:16px;background:#e5e7eb;border-radius:999px;overflow:hidden;margin-top:12px}.meter i{display:block;height:100%;width:0;background:#087f5b}.small{font-size:12px;color:#667085;line-height:1.5}.wrap{overflow:auto}table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid #e5e7eb;text-align:left;font-size:14px}th{background:#f8fafc}.good{color:#087f5b;font-weight:700}.bad{color:#c2410c;font-weight:700}.neutral{color:#b45309;font-weight:700}.tag{display:inline-block;padding:4px 8px;border-radius:999px;background:#eef2ff}
+@media(max-width:900px){.hero{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:600px){.search{flex-direction:column}.hero,.grid{grid-template-columns:1fr}}
+</style></head>
+<body><header><h1>🇮🇳 India Stock Pro Analyzer</h1><p>Search an NSE share and get a multi-factor research report.</p></header><main>
+<div class="card"><h2 style="margin-top:0">Search & Analyze</h2><div class="search"><input id="q" placeholder="Enter NSE symbol or company — HINDPETRO, TCS, INFY, RELIANCE…"><button onclick="analyze()">Analyze</button></div>
+<div id="status" class="status">Loading the latest market dataset…</div><div class="progress"><div id="bar" class="bar"></div></div><div id="pct" class="pct">0%</div></div>
+<section id="out" style="display:none">
+<div class="card"><div class="hero">
+<div class="metric"><span>Share</span><b id="sym">—</b><span id="company">—</span></div><div class="metric"><span>Latest price</span><b id="price">—</b></div><div class="metric"><span>Day change</span><b id="chg">—</b></div><div class="metric"><span>RSI 14</span><b id="rsi">—</b></div><div class="metric"><span>Trend</span><b id="trend">—</b></div></div>
+<div class="signal"><strong id="verdict">—</strong><div id="score">Research score: —/100</div><div class="meter"><i id="scorebar"></i></div><p id="why" class="small"></p></div></div>
+<div class="card"><h2>Technical picture</h2><div class="grid">
+<div class="box"><h3>RSI (14)</h3><div id="rsi2" class="value">—</div><div class="label">Momentum</div></div><div class="box"><h3>MACD</h3><div id="macd" class="value">—</div><div id="macdn" class="label">—</div></div><div class="box"><h3>50 DMA</h3><div id="ma50" class="value">—</div><div id="ma50n" class="label">—</div></div><div class="box"><h3>200 DMA</h3><div id="ma200" class="value">—</div><div id="ma200n" class="label">—</div></div>
+<div class="box"><h3>6-month momentum</h3><div id="mom" class="value">—</div><div class="label">Price change</div></div><div class="box"><h3>Volatility</h3><div id="vol" class="value">—</div><div class="label">Annualized estimate</div></div><div class="box"><h3>Volume</h3><div id="volume" class="value">—</div><div id="voln" class="label">vs 20-day average</div></div><div class="box"><h3>52-week position</h3><div id="range" class="value">—</div><div class="label">Price in range</div></div>
+</div></div>
+<div class="card"><h2>Fundamentals & valuation</h2><div class="grid">
+<div class="box"><h3>P/E</h3><div id="pe" class="value">—</div></div><div class="box"><h3>Forward P/E</h3><div id="fpe" class="value">—</div></div><div class="box"><h3>ROE</h3><div id="roe" class="value">—</div></div><div class="box"><h3>ROA</h3><div id="roa" class="value">—</div></div><div class="box"><h3>Debt / Equity</h3><div id="de" class="value">—</div></div><div class="box"><h3>Profit margin</h3><div id="margin" class="value">—</div></div><div class="box"><h3>Revenue growth</h3><div id="growth" class="value">—</div></div><div class="box"><h3>Dividend yield</h3><div id="dy" class="value">—</div></div>
+</div></div>
+<div class="card"><h2>Decision checklist</h2><div class="wrap"><table><thead><tr><th>Factor</th><th>Reading</th><th>Signal</th><th>Weight</th></tr></thead><tbody id="checks"></tbody></table></div></div>
+<div class="card small"><b>How to read the result:</b> This is a rules-based research score, not a guaranteed buy/sell prediction. It combines price trend, momentum, valuation, profitability, leverage, growth and dividend signals. Missing data is excluded rather than treated as negative. Data is cached by GitHub Actions and is not a licensed exchange-real-time feed; verify live price and NSE disclosures before trading.</div>
+</section></main>
+<script>
+let db=null;
+const $=id=>document.getElementById(id);
+function prog(n,t){$("bar").style.width=n+"%";$("pct").textContent=n+"%";if(t)$("status").textContent=t}
+function num(v,d=2){return v==null||!isFinite(v)?"—":Number(v).toLocaleString("en-IN",{maximumFractionDigits:d})}
+function pct(v){return v==null||!isFinite(v)?"—":num(v)+"%"}
+function cls(s){return /Bullish|Positive|Strong|Reasonable|Low|Attractive|Oversold/.test(s)?"good":/Bearish|Negative|Weak|Expensive|High|Overbought/.test(s)?"bad":"neutral"}
+function render(x){
+$("out").style.display="block";$("sym").textContent=x.symbol;$("company").textContent=x.company||"NSE";
+$("price").textContent=x.price!=null?"₹"+num(x.price):"—";$("chg").textContent=x.change!=null?(x.change>=0?"+":"")+pct(x.change):"—";$("chg").className="metric "+(x.change>=0?"good":"bad");
+$("rsi").textContent=num(x.rsi);$("trend").textContent=x.trend||"—";$("rsi2").textContent=num(x.rsi);$("macd").textContent=num(x.macd);$("macdn").textContent=x.macd==null?"—":x.macd>0?"Above zero":"Below zero";
+$("ma50").textContent=x.ma50?"₹"+num(x.ma50):"—";$("ma50n").textContent=x.ma50?(x.price>x.ma50?"Price above MA50":"Price below MA50"):"—";
+$("ma200").textContent=x.ma200?"₹"+num(x.ma200):"—";$("ma200n").textContent=x.ma200?(x.price>x.ma200?"Price above MA200":"Price below MA200"):"—";
+$("mom").textContent=pct(x.momentum6m);$("vol").textContent=pct(x.volatility);$("volume").textContent=x.volume?num(x.volume,0):"—";$("voln").textContent=x.volumeVsAvg||"—";$("range").textContent=x.rangePosition!=null?num(x.rangePosition,0)+"%":"—";
+$("pe").textContent=num(x.pe);$("fpe").textContent=num(x.forwardPE);$("roe").textContent=x.roe!=null?pct(x.roe):"—";$("roa").textContent=x.roa!=null?pct(x.roa):"—";$("de").textContent=num(x.debtEquity);$("margin").textContent=x.margin!=null?pct(x.margin):"—";$("growth").textContent=x.revenueGrowth!=null?pct(x.revenueGrowth):"—";$("dy").textContent=x.dividendYield!=null?pct(x.dividendYield):"—";
+$("verdict").textContent=x.verdict;$("score").textContent="Research score: "+Math.round(x.score)+"/100";$("scorebar").style.width=Math.round(x.score)+"%";$("why").textContent=x.reason||"Score generated from the available market factors.";
+$("checks").innerHTML=(x.checks||[]).map(c=>`<tr><td>${c.factor}</td><td>${c.reading}</td><td class="${cls(c.signal)}">${c.signal}</td><td>${c.weight}%</td></tr>`).join("");
+prog(100,"Analysis complete — dataset updated "+(db.updated||"")+" .");$("status").className="status ok"
+}
+async function loadDB(){prog(15,"Loading cached market data…");let r=await fetch("data/stocks.json?"+Date.now());if(!r.ok)throw Error("Market dataset not available yet");db=await r.json();prog(55,"Market dataset ready — enter a share name or symbol.");$("status").className="status ok";$("status").textContent="Dataset contains "+(db.count||0)+" stocks. Updated "+(db.updated||"");}
+async function analyze(){if(!db)return;let q=$("q").value.trim().toUpperCase();if(!q){$("status").className="status err";$("status").textContent="Enter a stock symbol or company name.";return}prog(65,"Searching and analyzing "+q+"…");let exact=db.stocks.find(x=>x.symbol===q),found=exact||db.stocks.find(x=>(x.company||"").toUpperCase().includes(q));if(!found){$("status").className="status err";$("status").textContent="Stock not found in the current dataset. Try the NSE symbol.";prog(100,"Search complete.");return}render(found)}
+$("q").addEventListener("keydown",e=>{if(e.key==="Enter")analyze()});loadDB().catch(e=>{prog(100,"Dataset unavailable.");$("status").className="status err";$("status").textContent="The automatic market update has not created stocks.json yet. Run the GitHub Action once."});
+</script></body></html>
